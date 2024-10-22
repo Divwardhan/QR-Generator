@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import QRCodeStyling from "qr-code-styling";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
+import QRCodeStyling, { FileExtension } from "qr-code-styling";
 import "./App.css"
 const qrCode = new QRCodeStyling({
   width: 300,
@@ -15,11 +15,13 @@ const qrCode = new QRCodeStyling({
 export default function App() {
 
   const [url, setUrl] = useState("Ronit");
-  const [fileExt, setFileExt] = useState("png");
-  const ref = useRef();
+  const [fileExt, setFileExt] = useState("jpeg");
+  const ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    qrCode.append(ref.current);
+    if (ref.current) {
+      qrCode.append(ref.current);
+    }
   }, []);
 
   useEffect(() => {
@@ -28,18 +30,18 @@ export default function App() {
     });
   }, [url]);
 
-  const onUrlChange = (event) => {
+  const onUrlChange = (event: ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     setUrl(event.target.value);
   };
 
-  const onExtensionChange = (event) => {
+  const onExtensionChange = (event: ChangeEvent<HTMLSelectElement>) => {
     setFileExt(event.target.value);
   };
 
   const onDownloadClick = () => {
     qrCode.download({
-      extension: fileExt
+      extension: fileExt as FileExtension
     });
   };
 
@@ -55,8 +57,8 @@ export default function App() {
         <select
           className="bg-gray-300 outline outline-3 outline-offset-2 outline-yellow-400 rounded-lg px-3"
           onChange={onExtensionChange}>
-          <option className="" value="png">PNG</option>
           <option className="" value="jpeg">JPEG</option>
+          <option className="" value="png">PNG</option>
           <option className="" value="webp">WEBP</option>
         </select>
         <button
